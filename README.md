@@ -37,4 +37,16 @@ saga.add(biz_url + '/TransOut', biz_url + '/TransOutRevert', post_data)
 saga.add(biz_url + '/TransIn', biz_url + '/TransInRevert', post_data)
 
 saga.submit
+
+# Model Transcation Msg
+dtm_msg = Dtmcli::Msg.new(dtm_url)
+dtm_msg.gen_gid
+
+post_data = {amount: 30}
+dtm_msg.add(biz_url + '/TransOut', post_data)
+dtm_msg.add(biz_url + '/TransIn', post_data)
+
+dtm_msg.prepare(biz_url + '/TransQuery')
+
+dtm_msg.submit
 ```

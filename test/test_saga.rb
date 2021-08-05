@@ -101,7 +101,7 @@ class TestSaga < Minitest::Test
     assert_equal 'SUCCESS', res['dtm_result']
   end
 
-  def test_submit_succ
+  def test_submit_fail
     stub_request(:get, @dtm_url + "/newGid").
       with(headers: @headers).
       to_return(
