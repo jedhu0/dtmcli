@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency             'faraday', '~> 1.6.0'
 
-  spec.add_development_dependency "bundler", '>= 2.2.10'
+  spec.add_development_dependency "bundler", '~> 2.2'
   spec.add_development_dependency 'minitest', '~> 5.8', '>= 5.8.4'
   spec.add_development_dependency 'webmock', '~> 3.13.0'
 
