@@ -4,11 +4,8 @@ module Dtmcli
     attr_accessor :parent_id, :branch_id
 
     class << self
-      def gen_gid(dtmUrl)
-        body = Proxy.execute(:get, dtmUrl + '/newGid') do |resp|
-          JSON.parse(resp.body)
-        end
-        return body["gid"]
+      def gen_gid(dtm_url)
+        return Dtm.new_gid(dtm_url)
       end
     end
 

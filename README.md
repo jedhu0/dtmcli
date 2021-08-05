@@ -15,7 +15,7 @@ gem install dtmcli
 dtm_url = '127.0.0.1:8080/api/dtm'
 biz_url = '127.0.0.1:3000/api/biz'
 
-# TCC version
+# Model TCC
 res = Dtmcli::Tcc.tcc_global_transaction(dtm_url) do |tcc|
   body = {amount: 30}
   print "calling trans out\n"
@@ -23,4 +23,18 @@ res = Dtmcli::Tcc.tcc_global_transaction(dtm_url) do |tcc|
   print "calling trans in\n"
   tcc.call_branch(body, biz_url + '/TransInTry', biz_url + '/TransInConfirm', biz_url + '/TransInCancel')
 end
+
+# Model Saga
+saga = Dtmcli::Saga.new(dtm_url)
+saga.gen_gid
+
+post_data = {
+  amount:         30,
+  transInResult:  "SUCCESS",
+  transOutResult: "SUCCESS",
+}
+saga.add(biz_url + '/TransOut', biz_url + '/TransOutRevert', post_data)
+saga.add(biz_url + '/TransIn', biz_url + '/TransInRevert', post_data)
+
+saga.submit
 ```

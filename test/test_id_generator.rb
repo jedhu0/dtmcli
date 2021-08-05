@@ -65,4 +65,14 @@ class TestIdGenerator < Minitest::Test
       Dtmcli::IdGenerator.gen_gid(@dtm_url)
     }
   end
+
+  def test_gen_gid_fail3
+    stub_request(:get, @dtm_url + "/newGid").
+      with(headers: @headers).
+      to_return(status: 200, body: {dtm_result: 'FAILURE', gid: ''}.to_json)
+    
+    assert_raises(Dtmcli::DtmSvrError) {
+      Dtmcli::IdGenerator.gen_gid(@dtm_url)
+    }
+  end
 end

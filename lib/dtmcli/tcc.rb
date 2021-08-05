@@ -1,7 +1,7 @@
 module Dtmcli
   class Tcc
-    attr_accessor :id_gen
-    attr_accessor :dtm_url, :gid
+    attr_accessor :id_gen, :gid
+    attr_reader :dtm, :dtm_url
 
     TRANS_TYPE = 'tcc'
 
@@ -16,12 +16,13 @@ module Dtmcli
         }
 
         begin
-          Proxy.execute(:post, dtm_url + '/prepare', {body: tbody})
+          tcc.dtm.prepare(tbody)
+
           yield tcc if block
 
-          Proxy.execute(:post, dtm_url + '/submit', {body: tbody})
+          tcc.dtm.submit(tbody)
         rescue => e
-          Proxy.execute(:post, dtm_url + '/abort', {body: tbody})
+          tcc.dtm.abort(tbody)
           return ''
         end
 
@@ -33,27 +34,22 @@ module Dtmcli
       @dtm_url = dtm_url
       @gid = gid
       @id_gen = IdGenerator.new
+      @dtm = Dtm.new(dtm_url)
     end
 
     def call_branch(body, try_url, confirm_url, cancel_url)
       branch_id = id_gen.gen_branch_id
 
-      Proxy.execute(
-        :post,
-        dtm_url + '/registerTccBranch',
-        {
-          body: {
-            gid: gid,
-            branch_id: branch_id,
-            trans_type: TRANS_TYPE,
-            status: 'prepared',
-            data: body.to_json,
-            try: try_url,
-            confirm: confirm_url,
-            cancel: cancel_url
-          }
-        }
-      )
+      dtm.register_tcc_branch({
+        gid: gid,
+        branch_id: branch_id,
+        trans_type: TRANS_TYPE,
+        status: 'prepared',
+        data: body.to_json,
+        try: try_url,
+        confirm: confirm_url,
+        cancel: cancel_url
+      })
 
       Proxy.execute(
         :post,
