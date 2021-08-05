@@ -8,7 +8,7 @@ module Dtmcli
       end
 
       def parse
-        Proc.new do |resp|
+        lambda do |resp|
           body = JSON.parse(resp.body)
           raise DtmSvrError, "dtm server error: data = #{body}" if !succ?(body)
           body
